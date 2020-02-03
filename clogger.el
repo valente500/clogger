@@ -1,8 +1,8 @@
 (require 'clogger-logging)
 
-(setq hungry-mode-last-buffer nil)
+(setq clogger-mode-last-buffer nil)
 ; TODO: This should be a custom
-(setq hungry-mode-prefix-commands
+(setq clogger-mode-prefix-commands
       '(digit-argument
 	universal-argument))
 
@@ -13,42 +13,42 @@
   (when-let ((w (get-buffer-window (current-buffer))))
     (set-window-point w (point))))
 
-(defun hungry-mode-message ()
+(defun clogger-mode-message ()
   (format "%-31s %s"
 	  (key-description (seq-remove #'help-echo-p (recent-keys)))
 	  (symbol-name this-original-command)))
 
-(defun hungry-mode-add-to-command-log ()
+(defun clogger-mode-add-to-command-log ()
   (let ((inhibit-message t)
 	(b (get-buffer-create "*commands*")))
     (with-current-buffer b
-      (push-log (hungry-mode-message))
+      (push-log (clogger-mode-message))
       (update-window-points)
       (clear-this-command-keys))))
 
-(defun hungry-mode-callback ()
+(defun clogger-mode-callback ()
   (let ((curr-buf
 	 (current-buffer))
-	(old-hungry-mode
-	 (and (bound-and-true-p hungry-mode-last-buffer)
-	      (with-current-buffer hungry-mode-last-buffer (bound-and-true-p hungry-mode)))))
+	(old-clogger-mode
+	 (and (bound-and-true-p clogger-mode-last-buffer)
+	      (with-current-buffer clogger-mode-last-buffer (bound-and-true-p clogger-mode)))))
     (cond
-     ((and (not old-hungry-mode) hungry-mode)
+     ((and (not old-clogger-mode) clogger-mode)
       (clear-this-command-keys))
-     ((and hungry-mode (not (member this-original-command hungry-mode-prefix-commands)))
-      (hungry-mode-add-to-command-log)))
-    (setq hungry-mode-last-buffer curr-buf)))
+     ((and clogger-mode (not (member this-original-command clogger-mode-prefix-commands)))
+      (clogger-mode-add-to-command-log)))
+    (setq clogger-mode-last-buffer curr-buf)))
 
-(define-minor-mode hungry-mode
+(define-minor-mode clogger-mode
   "Log keypresses and commands to *commands* buffer"
-  nil " Hungry" nil
-  (if (bound-and-true-p hungry-mode)
+  nil " Clogger" nil
+  (if (bound-and-true-p clogger-mode)
       (progn
-	(message "Enabled hungry-mode")
-	(add-hook 'post-command-hook 'hungry-mode-callback nil))
+	(message "Enabled clogger-mode")
+	(add-hook 'post-command-hook 'clogger-mode-callback nil))
     (progn
-      (message "Disabled hungry-mode")
-      (remove-hook 'post-command-hook 'hungry-mode-callback))))
+      (message "Disabled clogger-mode")
+      (remove-hook 'post-command-hook 'clogger-mode-callback))))
 
 (provide 'clogger)
 
